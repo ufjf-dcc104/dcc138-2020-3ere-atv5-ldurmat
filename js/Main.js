@@ -7,5 +7,4 @@ const pc = new Sprite();
 const en1 = new Sprite({ x: 140, w: 30, color: "red" });
 cena1.addsprite(pc);
 cena1.addsprite(en1);
-cena1.passo(0.16)
-cena1.desenhar();
+cena1.quadro(0);
