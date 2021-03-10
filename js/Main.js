@@ -7,6 +7,7 @@ const pc = new Sprite({ vx: 10 });
 const en1 = new Sprite({ x: 140, w: 30, color: "red" });
 cena1.addsprite(pc);
 cena1.addsprite(en1);
+cena1.addsprite(new Sprite({ y: 40, w: 30, color: "red" }));
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
