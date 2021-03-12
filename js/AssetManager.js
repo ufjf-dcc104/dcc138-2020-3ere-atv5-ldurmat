@@ -3,21 +3,36 @@ export default class AssetManager {
     this.aCarregar = 0;
     this.carregadas = 0;
     this.imagens = new Map();
+    this.audios = new Map();
   }
 
   carregaImagem(chave, source) {
     const img1 = new Image();
-    img1.addEventListener("load", ()=>{
-        console.log(`Imagem ${this.carregadas+1}/${this.aCarregar} carregada!`);
-        this.carregadas++;
-    })
+    img1.addEventListener("load", () => {
+      console.log(`Imagem ${this.carregadas + 1}/${this.aCarregar} carregada!`);
+      this.carregadas++;
+    });
     img1.src = source;
     this.imagens.set(chave, img1);
     this.aCarregar++;
   }
 
+  carregaAudio(chave, source) {
+    const audio = new Audio();
+    audio.addEventListener("loadeddata", () => {
+      console.log(`Audio ${this.carregadas + 1}/${this.aCarregar} carregado!`);
+      this.carregadas++;
+    });
+    audio.src = source;
+    this.audios.set(chave, audio);
+    this.aCarregar++;
+  }
+
   img(chave) {
     return this.imagens.get(chave);
+  }
+  audio(chave) {
+    return this.audios.get(chave);
   }
 
   progresso() {
@@ -27,7 +42,7 @@ export default class AssetManager {
     return "Nada a carregar";
   }
 
-  acabou(){
-      return this.carregadas === this.aCarregar;
+  acabou() {
+    return this.carregadas === this.aCarregar;
   }
 }
