@@ -6,9 +6,6 @@ const assets = new AssetManager();
 assets.carregaImagem("garota", "assets/garota.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("orc", "assets/orc.png");
-document.body.appendChild(assets.img("garota"));
-document.body.appendChild(assets.img("esqueleto"));
-document.body.appendChild(assets.img("orc"));
 
 const canvas = document.querySelector("canvas");
 console.log(canvas);
