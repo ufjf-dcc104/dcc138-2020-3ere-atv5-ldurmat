@@ -30,6 +30,7 @@ export default class Cena {
   }
 
   addsprite(sprite) {
+    sprite.cena = this;
     this.sprites.push(sprite);
   }
 
