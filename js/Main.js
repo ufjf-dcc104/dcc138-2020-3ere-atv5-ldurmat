@@ -22,12 +22,12 @@ const mapa1 = new Mapa(10, 14, 32);
 mapa1.carregaMapa(modeloMapa1);
 cena1.configuraMapa(mapa1);
 
-const pc = new Sprite({ x: 50, vx: 10 });
-const en1 = new Sprite({ x: 160, vx: -10, color: "red" });
+const pc = new Sprite({ x: 50, y: 200, vx: 10 });
+const en1 = new Sprite({ x: 160, y: 200, vx: -10, color: "red" });
 cena1.addsprite(pc);
 cena1.addsprite(en1);
-cena1.addsprite(new Sprite({ x: 115, y: 70, vy: 10, color: "red" }));
-cena1.addsprite(new Sprite({ x: 115, y: 160, vy: -10, color: "red" }));
+cena1.addsprite(new Sprite({ x: 95, y: 70, vy: 10, color: "red" }));
+cena1.addsprite(new Sprite({ x: 95, y: 160, vy: -10, color: "red" }));
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {
