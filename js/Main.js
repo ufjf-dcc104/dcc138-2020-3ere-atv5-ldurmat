@@ -26,7 +26,8 @@ const pc = new Sprite({ x: 50, vx: 10 });
 const en1 = new Sprite({ x: 160, vx: -10, color: "red" });
 cena1.addsprite(pc);
 cena1.addsprite(en1);
-cena1.addsprite(new Sprite({ y: 70, color: "red" }));
+cena1.addsprite(new Sprite({ x: 115, y: 70, vy: 10, color: "red" }));
+cena1.addsprite(new Sprite({ x: 115, y: 160, vy: -10, color: "red" }));
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {
