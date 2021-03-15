@@ -14,11 +14,11 @@ assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
 
 const canvas = document.querySelector("canvas");
-canvas.width = 14 * 32;
-canvas.height = 10 * 32;
-const cena1 = new Cena(canvas, assets);
 
-const mapa1 = new Mapa(10, 14, 32);
+const cena1 = new Cena(canvas, assets);
+const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
+canvas.width = modeloMapa1[0].length*32;
+canvas.height = modeloMapa1.length*32;
 mapa1.carregaMapa(modeloMapa1);
 cena1.configuraMapa(mapa1);
 
