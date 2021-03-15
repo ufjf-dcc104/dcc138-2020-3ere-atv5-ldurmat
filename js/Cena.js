@@ -103,7 +103,7 @@ export default class Cena {
   }
 
   spawnaRandInimigo() {
-    if (this.mapa != null) {
+    if (this.mapa != null && this.sprites.length<21) {
       const SIZE = this.mapa.SIZE;
       const sprite = new Sprite();
       const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
@@ -113,12 +113,11 @@ export default class Cena {
         sprite.x = rngx * SIZE + SIZE / 2;
         sprite.y = rngy * SIZE + SIZE / 2;
         sprite.color = "red";
-        //50% chance movimento em x
-        if (Math.random() < 0.8) {
-          sprite.vx = Math.floor(Math.random() * 200) - 50;
+        if (Math.random() < 0.5) {
+          sprite.vx = Math.floor(Math.random() * 400) - 200;
         }
-        if (Math.random() < 0.8) {
-          sprite.vy = Math.floor(Math.random() * 200) - 50;
+        if (Math.random() < 0.5) {
+          sprite.vy = Math.floor(Math.random() * 400) - 200;
         }
         this.addSprite(sprite);
       } else {

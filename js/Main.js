@@ -22,24 +22,64 @@ canvas.height = modeloMapa1.length * 32;
 mapa1.carregaMapa(modeloMapa1);
 cena1.configuraMapa(mapa1);
 
-const pc = new Sprite({ x: 50, y: 200, vx: 10 });
+const pc = new Sprite({ x: 2 * mapa1.SIZE, y: 10 * mapa1.SIZE });
 cena1.addSprite(pc);
+cena1.spawnaRandInimigo();
+cena1.spawnaRandInimigo();
+cena1.spawnaRandInimigo();
 cena1.spawnTimer(4000);
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {
+  const PCSPEED = 200;
   switch (e.key) {
+    case "W":
+    case "w":
+      pc.vy = -PCSPEED;
+      break;
+    case "A":
+    case "a":
+      pc.vx = -PCSPEED;
+      break;
+    case "S":
     case "s":
+      pc.vy = PCSPEED;
+      break;
+    case "D":
+    case "d":
+      pc.vx = PCSPEED;
+      break;
+    case "I":
+    case "i":
       cena1.iniciar();
       break;
+    case "P":
     case "p":
       cena1.parar();
       break;
+    case "C":
     case "c":
       assets.play("moeda");
       break;
+    case "B":
     case "b":
       assets.play("boom");
+      break;
+  }
+});
+document.addEventListener("keyup", (e) => {
+  switch (e.key) {
+    case "w":
+    case "W":
+    case "s":
+    case "S":
+      pc.vy = 0;
+      break;
+    case "a":
+    case "A":
+    case "d":
+    case "D":
+      pc.vx = 0;
       break;
   }
 });

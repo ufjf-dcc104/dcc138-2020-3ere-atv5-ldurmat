@@ -83,7 +83,7 @@ export default class Sprite {
           SIZE
         );
         if (this.colidiuCom(tile)) {
-          this.vx = 0;
+          this.quicar();
           this.x = tile.x - tile.w / 2 - this.w / 2 - 1;
         }
       }
@@ -107,7 +107,7 @@ export default class Sprite {
           SIZE
         );
         if (this.colidiuCom(tile)) {
-          this.vx = 0;
+          this.quicar();
           this.x = tile.x + tile.w / 2 + this.w / 2 + 1;
         }
       }
@@ -131,7 +131,7 @@ export default class Sprite {
           SIZE
         );
         if (this.colidiuCom(tile)) {
-          this.vy = 0;
+          this.quicar();
           this.y = tile.y - tile.h / 2 - this.h / 2 - 1;
         }
       }
@@ -155,10 +155,17 @@ export default class Sprite {
           SIZE
         );
         if (this.colidiuCom(tile)) {
-          this.vy = 0;
+          this.quicar();
           this.y = tile.y + tile.h / 2 + this.h / 2 + 1;
         }
       }
+    }
+  }
+
+  quicar() {
+    if (this.color == "red") {
+      this.vx = -1 * this.vx;
+      this.vy = -1 * this.vy;
     }
   }
 }
