@@ -23,11 +23,8 @@ mapa1.carregaMapa(modeloMapa1);
 cena1.configuraMapa(mapa1);
 
 const pc = new Sprite({ x: 50, y: 200, vx: 10 });
-const en1 = new Sprite({ x: 160, y: 200, vx: -10, color: "red" });
-cena1.addsprite(pc);
-cena1.addsprite(en1);
-cena1.addsprite(new Sprite({ x: 95, y: 70, vy: 10, color: "red" }));
-cena1.addsprite(new Sprite({ x: 95, y: 160, vy: -10, color: "red" }));
+cena1.addSprite(pc);
+cena1.spawnaRandInimigo(new Sprite);
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {

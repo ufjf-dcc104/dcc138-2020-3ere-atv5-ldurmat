@@ -30,7 +30,7 @@ export default class Cena {
     this.ctx.fillText(this.assets?.progresso(), 10, 20);
   }
 
-  addsprite(sprite) {
+  addSprite(sprite) {
     sprite.cena = this;
     this.sprites.push(sprite);
   }
@@ -94,8 +94,36 @@ export default class Cena {
     }
     this.aRemover = [];
   }
+
   configuraMapa(mapa) {
     this.mapa = mapa;
     this.mapa.cena = this;
+  }
+
+  spawnaRandInimigo(sprite) {
+    if (this.mapa != null) {
+      const SIZE = this.mapa.SIZE;
+      const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
+      const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
+      //se posicao vazia
+      if (this.mapa.tiles[rngy][rngx] == 0) {
+        
+        sprite.x = rngx*SIZE+SIZE/2;
+        sprite.y = rngy*SIZE+SIZE/2;
+        sprite.color = "red";
+        //50% chance movimento em x
+        if (Math.random() < 0.8) {
+          sprite.vx = Math.floor(Math.random() * 100) - 50;
+          console.log(sprite.vx);
+        }
+        if (Math.random() < 0.8) {
+          sprite.vy = Math.floor(Math.random() * 100) - 50;
+          console.log(sprite.vy);
+        }
+        this.addSprite(sprite);
+      } else {
+        this.spawnaRandInimigo(sprite); //recursão - atentar se existe alguma tile vazio!
+      }
+    }
   }
 }
