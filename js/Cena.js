@@ -1,4 +1,5 @@
 import Sprite from "./Sprite.js";
+
 export default class Cena {
   /*
     Desenha elementos na tela em uma animação.
@@ -85,8 +86,10 @@ export default class Cena {
     if (!this.aRemover.includes(b)) {
       this.aRemover.push(b);
     }
+    if (this.assets.audio("boom")) {
+      this.assets.play("boom");
+    }
   }
-
   removerSprites() {
     for (const alvo of this.aRemover) {
       const idx = this.sprites.indexOf(alvo);
@@ -103,7 +106,7 @@ export default class Cena {
   }
 
   spawnaRandInimigo() {
-    if (this.mapa != null && this.sprites.length<21) {
+    if (this.mapa != null && this.sprites.length < 21) {
       const SIZE = this.mapa.SIZE;
       const sprite = new Sprite();
       const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
