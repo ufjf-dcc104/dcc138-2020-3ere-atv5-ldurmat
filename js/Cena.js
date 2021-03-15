@@ -1,3 +1,4 @@
+import Sprite from "./Sprite.js";
 export default class Cena {
   /*
     Desenha elementos na tela em uma animação.
@@ -13,6 +14,7 @@ export default class Cena {
     this.idAnim = null;
     this.assets = assets;
     this.mapa = null;
+    this.timer = null;
   }
 
   desenhar() {
@@ -100,30 +102,37 @@ export default class Cena {
     this.mapa.cena = this;
   }
 
-  spawnaRandInimigo(sprite) {
+  spawnaRandInimigo() {
     if (this.mapa != null) {
       const SIZE = this.mapa.SIZE;
+      const sprite = new Sprite();
       const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
       const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
       //se posicao vazia
       if (this.mapa.tiles[rngy][rngx] == 0) {
-        
-        sprite.x = rngx*SIZE+SIZE/2;
-        sprite.y = rngy*SIZE+SIZE/2;
+        sprite.x = rngx * SIZE + SIZE / 2;
+        sprite.y = rngy * SIZE + SIZE / 2;
         sprite.color = "red";
         //50% chance movimento em x
         if (Math.random() < 0.8) {
-          sprite.vx = Math.floor(Math.random() * 100) - 50;
-          console.log(sprite.vx);
+          sprite.vx = Math.floor(Math.random() * 200) - 50;
         }
         if (Math.random() < 0.8) {
-          sprite.vy = Math.floor(Math.random() * 100) - 50;
-          console.log(sprite.vy);
+          sprite.vy = Math.floor(Math.random() * 200) - 50;
         }
         this.addSprite(sprite);
       } else {
         this.spawnaRandInimigo(sprite); //recursão - atentar se existe alguma tile vazio!
       }
     }
+  }
+
+  spawnTimer(intervalo) {
+    var isto = this;
+    clearTimeout(isto.timer);
+    isto.timer = setTimeout(function () {
+      isto.spawnaRandInimigo();
+      isto.spawnTimer(intervalo);
+    }, intervalo);
   }
 }

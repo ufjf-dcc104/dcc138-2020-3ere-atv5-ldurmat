@@ -17,14 +17,14 @@ const canvas = document.querySelector("canvas");
 
 const cena1 = new Cena(canvas, assets);
 const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
-canvas.width = modeloMapa1[0].length*32;
-canvas.height = modeloMapa1.length*32;
+canvas.width = modeloMapa1[0].length * 32;
+canvas.height = modeloMapa1.length * 32;
 mapa1.carregaMapa(modeloMapa1);
 cena1.configuraMapa(mapa1);
 
 const pc = new Sprite({ x: 50, y: 200, vx: 10 });
 cena1.addSprite(pc);
-cena1.spawnaRandInimigo(new Sprite);
+cena1.spawnTimer(4000);
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {

@@ -7,8 +7,8 @@ export default class Sprite {
     y = 100,
     vx = 0,
     vy = 0,
-    w = 20,
-    h = 20,
+    w = 24,
+    h = 24,
     color = "white",
   } = {}) {
     this.x = x;
