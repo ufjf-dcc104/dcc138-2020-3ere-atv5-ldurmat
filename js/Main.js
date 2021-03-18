@@ -7,6 +7,8 @@ import modeloMapa1 from "../maps/mapa1.js";
 
 const mixer = new Mixer(10);
 const assets = new AssetManager(mixer);
+
+assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("garota", "assets/garota.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("orc", "assets/orc.png");
@@ -19,7 +21,9 @@ const cena1 = new Cena(canvas, assets);
 const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
 canvas.width = modeloMapa1[0].length * 32;
 canvas.height = modeloMapa1.length * 32;
+
 mapa1.carregaMapa(modeloMapa1);
+mapa1.tileset = assets.img("tileset1");
 cena1.configuraMapa(mapa1);
 
 const pc = new Sprite({ x: 2 * mapa1.SIZE, y: 10 * mapa1.SIZE });
