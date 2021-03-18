@@ -1,5 +1,3 @@
-import Sprite from "./Sprite.js";
-
 export default class Cena {
   /*
     Desenha elementos na tela em uma animação.
@@ -15,7 +13,6 @@ export default class Cena {
     this.idAnim = null;
     this.assets = assets;
     this.mapa = null;
-    this.timer = null;
   }
 
   desenhar() {
@@ -105,36 +102,30 @@ export default class Cena {
     this.mapa.cena = this;
   }
 
-  spawnaRandInimigo() {
+  getRandSpriteObjVal(VMAX = 200) {
     if (this.mapa != null && this.sprites.length < 21) {
-      const SIZE = this.mapa.SIZE;
-      const sprite = new Sprite();
-      const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
-      const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
-      //se posicao vazia
-      if (this.mapa.tiles[rngy][rngx] == 0) {
-        sprite.x = rngx * SIZE + SIZE / 2;
-        sprite.y = rngy * SIZE + SIZE / 2;
-        sprite.color = "red";
-        if (Math.random() < 0.5) {
-          sprite.vx = Math.floor(Math.random() * 400) - 200;
+      //nao vai garantir achar, mas é um stop com boa probabilidade cumulativa
+      for (let i = 0; i < this.mapa.LINHAS * this.mapa.COLUNAS; i++) {
+        const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
+        const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
+        if (this.mapa.tiles[rngy][rngx] == 0) {
+          var rngvx = 0;
+          var rngvy = 0;
+          if (Math.random() < 0.5) {
+            rngvx = Math.floor(Math.random() * VMAX * 2) - VMAX;
+          }
+          if (Math.random() < 0.5) {
+            rngvy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+          }
+          return {
+            x: rngx * this.mapa.SIZE + this.mapa.SIZE / 2,
+            y: rngy * this.mapa.SIZE + this.mapa.SIZE / 2,
+            vx: rngvx,
+            vy: rngvy,
+            color: "red",
+          };
         }
-        if (Math.random() < 0.5) {
-          sprite.vy = Math.floor(Math.random() * 400) - 200;
-        }
-        this.addSprite(sprite);
-      } else {
-        this.spawnaRandInimigo(sprite); //recursão - atentar se existe alguma tile vazio!
       }
     }
-  }
-
-  spawnTimer(intervalo) {
-    var isto = this;
-    clearTimeout(isto.timer);
-    isto.timer = setTimeout(function () {
-      isto.spawnaRandInimigo();
-      isto.spawnTimer(intervalo);
-    }, intervalo);
-  }
+  }  
 }
