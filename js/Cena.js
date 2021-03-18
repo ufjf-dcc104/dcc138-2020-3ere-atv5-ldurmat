@@ -13,6 +13,9 @@ export default class Cena {
     this.idAnim = null;
     this.assets = assets;
     this.mapa = null;
+    this.eventTimer = 0;
+    this.eventInterval = null;
+    this.event = null;
   }
 
   desenhar() {
@@ -46,6 +49,7 @@ export default class Cena {
   quadro(t) {
     this.t0 = this.t0 ?? t;
     this.dt = (t - this.t0) / 1000;
+    this.timedEvent();
     this.passo(this.dt);
     this.desenhar();
     this.checaColisao();
@@ -102,30 +106,43 @@ export default class Cena {
     this.mapa.cena = this;
   }
 
-  getRandSpriteObjVal(VMAX = 200) {
+  setRandSprite(sprite, VMAX = 200) {
     if (this.mapa != null && this.sprites.length < 21) {
-      //nao vai garantir achar, mas é um stop com boa probabilidade cumulativa
+      //limite de pc+20 sprites na cena
       for (let i = 0; i < this.mapa.LINHAS * this.mapa.COLUNAS; i++) {
+        //nao vai garantir achar, mas é um stop com boa probabilidade cumulativa
         const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
         const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
         if (this.mapa.tiles[rngy][rngx] == 0) {
-          var rngvx = 0;
-          var rngvy = 0;
+          sprite.x = rngx * this.mapa.SIZE + this.mapa.SIZE / 2;
+          sprite.y = rngy * this.mapa.SIZE + this.mapa.SIZE / 2;
+          sprite.vx = 0;
+          sprite.vy = 0;
+          sprite.color = "red";
           if (Math.random() < 0.5) {
-            rngvx = Math.floor(Math.random() * VMAX * 2) - VMAX;
+            sprite.vx = Math.floor(Math.random() * VMAX * 2) - VMAX;
           }
           if (Math.random() < 0.5) {
-            rngvy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+            sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
           }
-          return {
-            x: rngx * this.mapa.SIZE + this.mapa.SIZE / 2,
-            y: rngy * this.mapa.SIZE + this.mapa.SIZE / 2,
-            vx: rngvx,
-            vy: rngvy,
-            color: "red",
-          };
+          this.addSprite(sprite);
+          break;
         }
       }
     }
-  }  
+  }
+
+  setTimedEvent(evento, intervalo) {
+    this.event = evento;
+    this.eventInterval = intervalo;
+  }
+
+  timedEvent() {
+    if (this.eventInterval != null && this.eventTimer > this.eventInterval) {
+      this.event();
+      this.eventTimer = 0;
+    } else {
+      this.eventTimer += this.dt;
+    }
+  }
 }

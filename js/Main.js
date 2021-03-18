@@ -24,9 +24,12 @@ cena1.configuraMapa(mapa1);
 
 const pc = new Sprite({ x: 2 * mapa1.SIZE, y: 10 * mapa1.SIZE });
 cena1.addSprite(pc);
-cena1.addSprite(new Sprite (cena1.getRandSpriteObjVal()));
-cena1.addSprite(new Sprite (cena1.getRandSpriteObjVal(400)));
-cena1.addSprite(new Sprite (cena1.getRandSpriteObjVal(600)));
+cena1.setRandSprite(new Sprite());
+cena1.setRandSprite(new Sprite(), 400);
+cena1.setRandSprite(new Sprite(), 600);
+cena1.setTimedEvent(function () {
+  return cena1.setRandSprite(new Sprite());
+}, 4);
 
 cena1.iniciar();
 document.addEventListener("keydown", (e) => {
