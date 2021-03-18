@@ -106,7 +106,7 @@ export default class Cena {
     this.mapa.cena = this;
   }
 
-  setRandSprite(sprite, VMAX = 200) {
+  setRandSprite(sprite, VMAX = 500) {
     if (this.mapa != null && this.sprites.length < 21) {
       //limite de pc+20 sprites na cena
       for (let i = 0; i < this.mapa.LINHAS * this.mapa.COLUNAS; i++) {
@@ -121,9 +121,14 @@ export default class Cena {
           sprite.color = "red";
           if (Math.random() < 0.5) {
             sprite.vx = Math.floor(Math.random() * VMAX * 2) - VMAX;
-          }
-          if (Math.random() < 0.5) {
+            if (Math.random() < 0.2) {
+              sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+            }
+          } else {
             sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+            if (Math.random() < 0.2) {
+              sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+            }
           }
           this.addSprite(sprite);
           break;
