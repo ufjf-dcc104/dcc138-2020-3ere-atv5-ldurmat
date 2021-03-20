@@ -7,8 +7,14 @@ import modeloMapa1 from "../maps/mapa1.js";
 
 const mixer = new Mixer(10);
 const assets = new AssetManager(mixer);
+const canvas = document.querySelector("canvas");
+canvas.width = 32 * 32;
+canvas.height = 20 * 32;
+const ctx = canvas.getContext("2d");
 
 assets.carregaImagem("loading", "assets/loading.png");
+assets.img("loading").onload = () => ctx.drawImage(assets.img("loading"), 0, 0);
+assets.carregaImagem("menu", "assets/menu.png");
 assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("pausado", "assets/paused.png");
 assets.carregaImagem("garota", "assets/garota.png");
@@ -16,18 +22,16 @@ assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("orc", "assets/orc.png");
 assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
+assets.img("menu").onload = () => ctx.drawImage(assets.img("menu"), 0, 0);
 
-const canvas = document.querySelector("canvas");
+const menu = new Cena(canvas, assets);
+let cenaAtual = menu;
 
 const cena1 = new Cena(canvas, assets);
 const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
-canvas.width = modeloMapa1[0].length * 32;
-canvas.height = modeloMapa1.length * 32;
-
 mapa1.carregaMapa(modeloMapa1);
 mapa1.tileset = assets.img("tileset1");
 cena1.configuraMapa(mapa1);
-
 const pc = new Sprite({ x: 2 * mapa1.SIZE, y: 10 * mapa1.SIZE });
 cena1.addSprite(pc);
 cena1.setRandSprite(new Sprite());
@@ -37,8 +41,24 @@ cena1.setTimedEvent(function () {
   return cena1.setRandSprite(new Sprite());
 }, 4);
 
-cena1.iniciar();
-window.onblur = () => cena1.parar();
+canvas.addEventListener("mousedown", play);
+
+function play(e) {
+  const pos = cenaAtual.posicaoCursor(e);
+  if (
+    cenaAtual == menu &&
+    pos.x > 100 &&
+    pos.x < 400 &&
+    pos.y > 400 &&
+    pos.y < 500
+  ) {
+    cenaAtual = cena1;
+    cenaAtual.iniciar();
+    canvas.removeEventListener("mousedown", play);
+  }
+}
+
+window.onblur = () => cenaAtual.parar();
 
 document.addEventListener("keydown", (e) => {
   const PCSPEED = 200;
@@ -61,10 +81,10 @@ document.addEventListener("keydown", (e) => {
       break;
     case "P":
     case "p":
-      if (cena1.t0 != null) {
-        cena1.parar();
+      if (cenaAtual.t0 != null) {
+        cenaAtual.parar();
       } else {
-        cena1.iniciar();
+        cenaAtual.iniciar();
       }
       break;
     case "C":

@@ -18,7 +18,7 @@ export default class Cena {
     this.event = null;
   }
 
-  async desenhar() {
+  desenhar() {
     this.ctx.fillStyle = "lightblue";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.assets.acabou()) {
@@ -29,8 +29,8 @@ export default class Cena {
         sprite.aplicaRestricoes();
       }
     } else {
-      this.ctx.drawImage(this.assets.img("loading"), 0, 0);
-      await until(() => this.assets.acabou() == true);
+      this.parar();
+      this.checaLoading();
     }
     this.ctx.fillStyle = "yellow";
     this.ctx.fillText(this.assets?.progresso(), 10, 20);
@@ -68,10 +68,12 @@ export default class Cena {
   }
 
   parar() {
-    if (this.t0 != null) this.ctx.drawImage(this.assets.img("pausado"), 0, 0);
-    cancelAnimationFrame(this.idAnim);
-    this.t0 = null;
-    this.dt = 0;
+    if (this.mapa != null && this.t0 != null) {
+      this.ctx.drawImage(this.assets.img("pausado"), 0, 0);
+      cancelAnimationFrame(this.idAnim);
+      this.t0 = null;
+      this.dt = 0;
+    }
   }
   checaColisao() {
     for (let a = 0; a < this.sprites.length - 1; a++) {
@@ -152,6 +154,29 @@ export default class Cena {
       this.eventTimer = 0;
     } else {
       this.eventTimer += this.dt;
+    }
+  }
+
+  posicaoCursor(e) {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return { x, y };
+  }
+
+  async checaLoading() {
+    this.ctx.drawImage(this.assets.img("loading"), 0, 0);
+    const tempoInit = new Date().getTime();
+    while (true) {
+      if (this.assets.acabou()) {
+        console.log("Loading acabou!");
+        break;
+      }
+      if (new Date() > tempoInit + 4000) {
+        console.log("Loading timeout...");
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 }

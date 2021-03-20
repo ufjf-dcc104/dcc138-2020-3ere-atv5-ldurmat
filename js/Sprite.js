@@ -51,7 +51,7 @@ export default class Sprite {
     );
   }
 
-  aplicaRestricoes(dt) {
+  aplicaRestricoes() {
     this.aplicaRestricoesDireita(this.mx + 1, this.my - 1);
     this.aplicaRestricoesDireita(this.mx + 1, this.my);
     this.aplicaRestricoesDireita(this.mx + 1, this.my + 1);
