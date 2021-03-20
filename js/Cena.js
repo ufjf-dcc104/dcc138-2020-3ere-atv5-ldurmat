@@ -18,7 +18,7 @@ export default class Cena {
     this.event = null;
   }
 
-  desenhar() {
+  async desenhar() {
     this.ctx.fillStyle = "lightblue";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.assets.acabou()) {
@@ -28,6 +28,9 @@ export default class Cena {
         sprite.desenhar(this.ctx);
         sprite.aplicaRestricoes();
       }
+    } else {
+      this.ctx.drawImage(this.assets.img("loading"), 0, 0);
+      await until(() => this.assets.acabou() == true);
     }
     this.ctx.fillStyle = "yellow";
     this.ctx.fillText(this.assets?.progresso(), 10, 20);

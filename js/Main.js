@@ -8,6 +8,7 @@ import modeloMapa1 from "../maps/mapa1.js";
 const mixer = new Mixer(10);
 const assets = new AssetManager(mixer);
 
+assets.carregaImagem("loading", "assets/loading.png");
 assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("pausado", "assets/paused.png");
 assets.carregaImagem("garota", "assets/garota.png");
@@ -57,11 +58,6 @@ document.addEventListener("keydown", (e) => {
     case "D":
     case "d":
       pc.vx = PCSPEED;
-      break;
-    case "I":
-    case "i":
-      console.log(cena1.idAnim);
-      cena1.iniciar();
       break;
     case "P":
     case "p":
