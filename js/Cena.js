@@ -65,6 +65,7 @@ export default class Cena {
   }
 
   parar() {
+    if (this.t0 != null) this.ctx.drawImage(this.assets.img("pausado"), 0, 0);
     cancelAnimationFrame(this.idAnim);
     this.t0 = null;
     this.dt = 0;

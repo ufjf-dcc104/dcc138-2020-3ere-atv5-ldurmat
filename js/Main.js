@@ -9,6 +9,7 @@ const mixer = new Mixer(10);
 const assets = new AssetManager(mixer);
 
 assets.carregaImagem("tileset1", "assets/tileset1.png");
+assets.carregaImagem("pausado", "assets/paused.png");
 assets.carregaImagem("garota", "assets/garota.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("orc", "assets/orc.png");
@@ -36,6 +37,8 @@ cena1.setTimedEvent(function () {
 }, 4);
 
 cena1.iniciar();
+window.onblur = () => cena1.parar();
+
 document.addEventListener("keydown", (e) => {
   const PCSPEED = 200;
   switch (e.key) {
@@ -57,11 +60,16 @@ document.addEventListener("keydown", (e) => {
       break;
     case "I":
     case "i":
+      console.log(cena1.idAnim);
       cena1.iniciar();
       break;
     case "P":
     case "p":
-      cena1.parar();
+      if (cena1.t0 != null) {
+        cena1.parar();
+      } else {
+        cena1.iniciar();
+      }
       break;
     case "C":
     case "c":
