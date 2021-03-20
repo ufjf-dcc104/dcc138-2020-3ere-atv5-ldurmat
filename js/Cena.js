@@ -21,19 +21,27 @@ export default class Cena {
   desenhar() {
     this.ctx.fillStyle = "lightblue";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    if (this.assets.acabou()) {
-      this.mapa?.desenhar(this.ctx);
-      for (let s = 0; s < this.sprites.length; s++) {
-        const sprite = this.sprites[s];
-        sprite.desenhar(this.ctx);
-        sprite.aplicaRestricoes();
+    if (this.mapa != null) {
+      if (this.assets.acabou()) {
+        this.mapa?.desenhar(this.ctx);
+        for (let s = 0; s < this.sprites.length; s++) {
+          const sprite = this.sprites[s];
+          sprite.desenhar(this.ctx);
+          sprite.aplicaRestricoes();
+        }
+      } else {
+        this.parar();
+        this.checaLoading();
       }
     } else {
-      this.parar();
-      this.checaLoading();
+      if(this.assets.acabou()){
+        this.ctx.drawImage(this.assets.img("menu"), 0, 0);
+      }else{
+        this.ctx.drawImage(this.assets.img("loading"), 0, 0);
+      }
+      this.ctx.fillStyle = "yellow";
+      this.ctx.fillText(this.assets?.progresso(), 10, 20);
     }
-    this.ctx.fillStyle = "yellow";
-    this.ctx.fillText(this.assets?.progresso(), 10, 20);
   }
 
   addSprite(sprite) {

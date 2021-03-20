@@ -10,10 +10,8 @@ const assets = new AssetManager(mixer);
 const canvas = document.querySelector("canvas");
 canvas.width = 32 * 32;
 canvas.height = 20 * 32;
-const ctx = canvas.getContext("2d");
 
 assets.carregaImagem("loading", "assets/loading.png");
-assets.img("loading").onload = () => ctx.drawImage(assets.img("loading"), 0, 0);
 assets.carregaImagem("menu", "assets/menu.png");
 assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("pausado", "assets/paused.png");
@@ -22,10 +20,10 @@ assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("orc", "assets/orc.png");
 assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
-assets.img("menu").onload = () => ctx.drawImage(assets.img("menu"), 0, 0);
 
 const menu = new Cena(canvas, assets);
 let cenaAtual = menu;
+menu.iniciar();
 
 const cena1 = new Cena(canvas, assets);
 const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
