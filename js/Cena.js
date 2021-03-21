@@ -110,22 +110,26 @@ export default class Cena {
     }
   }
   quandoColidir(a, b) {
-    if (!this.aRemover.includes(a)) {
-      this.aRemover.push(a);
-    }
-    if (!this.aRemover.includes(b)) {
-      this.aRemover.push(b);
-    }
     if (!a.isCollectible && !b.isCollectible) {
+      if (!this.aRemover.includes(a)) {
+        this.aRemover.push(a);
+      }
+      if (!this.aRemover.includes(b)) {
+        this.aRemover.push(b);
+      }
       this.assets.play("boom");
     } else if (a.collectible && b.isPlayer) {
-      this.assets.play("coin");
-      a.collected++;
-      this.aRemover.push(a);
-    } else if (a.isPlayer && b.isCollectible) {
-      this.assets.play("coin");
+      if (!this.aRemover.includes(a)) {
+        this.aRemover.push(a);
+      }
+      this.assets.play("moeda");
       b.collected++;
-      this.aRemover.push(b);
+    } else if (a.isPlayer && b.isCollectible) {
+      if (!this.aRemover.includes(b)) {
+        this.aRemover.push(b);
+      }
+      this.assets.play("moeda");
+      a.collected++;
     }
   }
   removerSprites() {

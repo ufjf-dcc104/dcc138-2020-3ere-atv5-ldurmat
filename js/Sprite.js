@@ -3,14 +3,22 @@ export default class Sprite {
     Modela algo que se move na tela.
   */
   constructor({
-    x = 100,
-    y = 100,
+    x = 128,
+    y = 128,
     vx = 0,
     vy = 0,
     w = 24,
     h = 24,
     color = "white",
     assetImg = new Image(),
+    isPlayer = false,
+    isCollectible = false,
+    POSES = [
+      { qmax: 8, pv: 12 },
+      { qmax: 8, pv: 12 },
+      { qmax: 8, pv: 12 },
+      { qmax: 8, pv: 12 },
+    ],
   } = {}) {
     this.x = x;
     this.y = y;
@@ -22,20 +30,15 @@ export default class Sprite {
     this.cena = null;
     this.mx = 0;
     this.my = 0;
-    this.isCollectible = false;
-    this.isPlayer = false;
+    this.isCollectible = isCollectible;
+    this.isPlayer = isPlayer;
     this.collected = 0;
     this.assetImg = assetImg;
     this.SIZE = 64;
     this.tipo = null;
     this.pose = 0;
     this.quadro = 0;
-    this.POSES = [
-      { qmax: 8, pv: 12 },
-      { qmax: 8, pv: 12 },
-      { qmax: 8, pv: 12 },
-      { qmax: 8, pv: 12 },
-    ];
+    this.POSES = POSES;
   }
 
   desenhar(ctx) {
@@ -50,6 +53,11 @@ export default class Sprite {
       this.SIZE,
       this.SIZE
     );
+    if (this.isPlayer) {
+      ctx.font = "20px Arial";
+      ctx.fillStyle = "yellow";
+      ctx.fillText(`Moedas: ${this.collected}`, 10, 20);
+    }
   }
   // desenharDefault(ctx) {
   //   ctx.fillStyle = this.color;
@@ -68,33 +76,40 @@ export default class Sprite {
     this.y = this.y + this.vy * dt;
     this.mx = Math.floor(this.x / this.cena.mapa.SIZE);
     this.my = Math.floor(this.y / this.cena.mapa.SIZE);
+    if (!this.isCollectible) {
+      if (this.vy < 0) {
+        this.pose = 0;
+        this.atualizaQuadro(dt);
+      } else if (this.vy > 0) {
+        this.pose = 2;
+        this.atualizaQuadro(dt);
+      }
+      if (this.vx < 0) {
+        this.pose = 1;
+        this.atualizaQuadro(dt);
+      } else if (this.vx > 0) {
+        this.pose = 3;
+        this.atualizaQuadro(dt);
+      }
+    } else {
+      if (this.quadro >= this.POSES[this.pose].qmax) {
+        this.quadro = 0;
+        if (this.pose + 1 >= this.POSES.length) {
+          this.pose = 0;
+        } else {
+          this.pose++;
+        }
+      } else {
+        this.quadro += this.POSES[this.pose].pv * dt;
+      }
+    }
+  }
 
-    if (this.vy < 0) {
-      this.pose = 0;
-      this.quadro =
-        this.quadro >= this.POSES[this.pose].qmax
-          ? 0
-          : this.quadro + this.POSES[this.pose].pv * dt;
-    } else if (this.vy > 0) {
-      this.pose = 2;
-      this.quadro =
-        this.quadro >= this.POSES[this.pose].qmax
-          ? 0
-          : this.quadro + this.POSES[this.pose].pv * dt;
-    }
-    if (this.vx < 0) {
-      this.pose = 1;
-      this.quadro =
-        this.quadro >= this.POSES[this.pose].qmax
-          ? 0
-          : this.quadro + this.POSES[this.pose].pv * dt;
-    } else if (this.vx > 0) {
-      this.pose = 3;
-      this.quadro =
-        this.quadro >= this.POSES[this.pose].qmax
-          ? 0
-          : this.quadro + this.POSES[this.pose].pv * dt;
-    }
+  atualizaQuadro(dt) {
+    this.quadro =
+      this.quadro >= this.POSES[this.pose].qmax
+        ? 0
+        : this.quadro + this.POSES[this.pose].pv * dt;
   }
 
   colidiuCom(outro) {

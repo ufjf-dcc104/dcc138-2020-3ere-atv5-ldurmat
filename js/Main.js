@@ -26,6 +26,7 @@ assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("pausado", "assets/paused.png");
 assets.carregaImagem("golden", "assets/golden.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
+assets.carregaImagem("moeda", "assets/dogesheet.png");
 assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
 
@@ -43,10 +44,28 @@ const pc = new Sprite({
   x: 1 * mapa1.SIZE + mapa1.SIZE / 2,
   y: 10 * mapa1.SIZE + mapa1.SIZE / 2,
   assetImg: assets.img("golden"),
+  isPlayer: true,
 });
 cena1.addPlayer(pc, input);
+const posesMoeda = [
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+  { qmax: 5, pv: 12 },
+];
+cena1.addSprite(
+  new Sprite({
+    isCollectible: true,
+    assetImg: assets.img("moeda"),
+    POSES: posesMoeda,
+  })
+);
 cena1.setTimedEvent(function () {
-  return cena1.setRandSprite(new Sprite({assetImg: assets.img("esqueleto")}));
+  return cena1.setRandSprite(new Sprite({ assetImg: assets.img("esqueleto") }));
 }, 4);
 
 canvas.addEventListener("mousedown", play);
