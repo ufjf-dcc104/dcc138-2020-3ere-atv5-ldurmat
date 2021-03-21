@@ -30,13 +30,13 @@ export default class Cena {
           sprite.aplicaRestricoes();
         }
       } else {
-        this.parar();
+        this.pausar();
         this.checaLoading();
       }
     } else {
-      if(this.assets.acabou()){
+      if (this.assets.acabou()) {
         this.ctx.drawImage(this.assets.img("menu"), 0, 0);
-      }else{
+      } else {
         this.ctx.drawImage(this.assets.img("loading"), 0, 0);
       }
       this.ctx.fillStyle = "yellow";
@@ -76,6 +76,12 @@ export default class Cena {
   }
 
   parar() {
+    cancelAnimationFrame(this.idAnim);
+    this.t0 = null;
+    this.dt = 0;
+  }
+
+  pausar() {
     if (this.mapa != null && this.t0 != null) {
       this.ctx.drawImage(this.assets.img("pausado"), 0, 0);
       cancelAnimationFrame(this.idAnim);

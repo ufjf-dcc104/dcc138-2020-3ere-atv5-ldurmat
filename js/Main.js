@@ -50,13 +50,14 @@ function play(e) {
     pos.y > 400 &&
     pos.y < 500
   ) {
+    cenaAtual.parar();
+    canvas.removeEventListener("mousedown", play);
     cenaAtual = cena1;
     cenaAtual.iniciar();
-    canvas.removeEventListener("mousedown", play);
   }
 }
 
-window.onblur = () => cenaAtual.parar();
+window.onblur = () => cenaAtual.pausar();
 
 document.addEventListener("keydown", (e) => {
   const PCSPEED = 200;
@@ -80,8 +81,8 @@ document.addEventListener("keydown", (e) => {
     case "P":
     case "p":
       if (cenaAtual.t0 != null) {
-        cenaAtual.parar();
-      } else {
+        cenaAtual.pausar();
+      } else if (cenaAtual != menu) {
         cenaAtual.iniciar();
       }
       break;
