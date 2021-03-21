@@ -6,6 +6,7 @@ export default class Cena {
   constructor(canvas, assets = null) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
+    this.player = null;
     this.sprites = [];
     this.aRemover = [];
     this.t0 = 0;
@@ -16,6 +17,7 @@ export default class Cena {
     this.eventTimer = 0;
     this.eventInterval = null;
     this.event = null;
+    this.input = null;
   }
 
   desenhar() {
@@ -49,6 +51,12 @@ export default class Cena {
     this.sprites.push(sprite);
   }
 
+  addPlayer(sprite, input) {
+    this.input = input;
+    this.player = sprite;
+    this.addSprite(sprite);
+  }
+
   passo(dt) {
     if (this.assets.acabou()) {
       for (const sprite of this.sprites) {
@@ -61,6 +69,7 @@ export default class Cena {
     this.t0 = this.t0 ?? t;
     this.dt = (t - this.t0) / 1000;
     this.timedEvent();
+    this.playerMovement();
     this.passo(this.dt);
     this.desenhar();
     this.checaColisao();
@@ -191,6 +200,27 @@ export default class Cena {
         break;
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+
+  playerMovement() {
+    const pcSpeed = 200;
+    const input = this.input;
+    if (input != null) {
+      if (input.isPressed(input.keyset.W) == input.isPressed(input.keyset.S)) {
+        this.player.vy = 0;
+      } else if (this.input.isPressed(input.keyset.W)) {
+        this.player.vy = -pcSpeed;
+      } else {
+        this.player.vy = pcSpeed;
+      }
+      if (input.isPressed(input.keyset.A) == input.isPressed(input.keyset.D)) {
+        this.player.vx = 0;
+      } else if (this.input.isPressed(input.keyset.A)) {
+        this.player.vx = -pcSpeed;
+      } else {
+        this.player.vx = pcSpeed;
+      }
     }
   }
 }
