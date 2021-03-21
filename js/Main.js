@@ -15,11 +15,17 @@ canvas.height = 20 * 32;
 
 assets.carregaImagem("loading", "assets/loading.png");
 assets.carregaImagem("menu", "assets/menu.png");
+assets.carregaImagem("ending", "assets/gameEnd.png");
+assets.carregaImagem("endHow", "assets/endHow.png");
+assets.carregaImagem("endSuch", "assets/endSuch.png");
+assets.carregaImagem("endVery", "assets/endVery.png");
+assets.carregaImagem("endMany", "assets/endMany.png");
+assets.carregaImagem("endMuch", "assets/endMuch.png");
+assets.carregaImagem("endWow", "assets/endWow.png");
 assets.carregaImagem("tileset1", "assets/tileset1.png");
 assets.carregaImagem("pausado", "assets/paused.png");
-assets.carregaImagem("garota", "assets/garota.png");
+assets.carregaImagem("golden", "assets/golden.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
-assets.carregaImagem("orc", "assets/orc.png");
 assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
 
@@ -32,13 +38,15 @@ const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
 mapa1.carregaMapa(modeloMapa1);
 mapa1.tileset = assets.img("tileset1");
 cena1.configuraMapa(mapa1);
-const pc = new Sprite({ x: 2 * mapa1.SIZE, y: 10 * mapa1.SIZE });
+
+const pc = new Sprite({
+  x: 1 * mapa1.SIZE + mapa1.SIZE / 2,
+  y: 10 * mapa1.SIZE + mapa1.SIZE / 2,
+  assetImg: assets.img("golden"),
+});
 cena1.addPlayer(pc, input);
-cena1.setRandSprite(new Sprite());
-cena1.setRandSprite(new Sprite(), 400);
-cena1.setRandSprite(new Sprite(), 600);
 cena1.setTimedEvent(function () {
-  return cena1.setRandSprite(new Sprite());
+  return cena1.setRandSprite(new Sprite({assetImg: assets.img("esqueleto")}));
 }, 4);
 
 canvas.addEventListener("mousedown", play);

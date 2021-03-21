@@ -19,30 +19,30 @@ export default class Mapa {
     this.desenhaObj(ctx);
   }
 
-  desenharDefault(ctx) {
-    for (let l = 0; l < this.LINHAS; l++) {
-      for (let c = 0; c < this.COLUNAS; c++) {
-        switch (this.tiles[l][c]) {
-          case 1:
-            ctx.fillStyle = "grey";
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "black";
-            break;
-          case 2:
-            ctx.fillStyle = "orange";
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "yellow";
-            break;
-          default:
-            ctx.fillStyle = "black";
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "grey";
-        }
-        ctx.fillRect(c * this.SIZE, l * this.SIZE, this.SIZE, this.SIZE);
-        ctx.strokeRect(c * this.SIZE, l * this.SIZE, this.SIZE, this.SIZE);
-      }
-    }
-  }
+  // desenharDefault(ctx) {
+  //   for (let l = 0; l < this.LINHAS; l++) {
+  //     for (let c = 0; c < this.COLUNAS; c++) {
+  //       switch (this.tiles[l][c]) {
+  //         case 1:
+  //           ctx.fillStyle = "grey";
+  //           ctx.lineWidth = 1;
+  //           ctx.strokeStyle = "black";
+  //           break;
+  //         case 2:
+  //           ctx.fillStyle = "orange";
+  //           ctx.lineWidth = 2;
+  //           ctx.strokeStyle = "yellow";
+  //           break;
+  //         default:
+  //           ctx.fillStyle = "black";
+  //           ctx.lineWidth = 1;
+  //           ctx.strokeStyle = "grey";
+  //       }
+  //       ctx.fillRect(c * this.SIZE, l * this.SIZE, this.SIZE, this.SIZE);
+  //       ctx.strokeRect(c * this.SIZE, l * this.SIZE, this.SIZE, this.SIZE);
+  //     }
+  //   }
+  // }
 
   carregaMapa(modelo) {
     this.LINHAS = modelo.length;

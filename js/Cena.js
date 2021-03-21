@@ -116,8 +116,16 @@ export default class Cena {
     if (!this.aRemover.includes(b)) {
       this.aRemover.push(b);
     }
-    if (this.assets.audio("boom")) {
+    if (!a.isCollectible && !b.isCollectible) {
       this.assets.play("boom");
+    } else if (a.collectible && b.isPlayer) {
+      this.assets.play("coin");
+      a.collected++;
+      this.aRemover.push(a);
+    } else if (a.isPlayer && b.isCollectible) {
+      this.assets.play("coin");
+      b.collected++;
+      this.aRemover.push(b);
     }
   }
   removerSprites() {
@@ -135,14 +143,14 @@ export default class Cena {
     this.mapa.cena = this;
   }
 
-  setRandSprite(sprite, VMAX = 500) {
-    if (this.mapa != null && this.sprites.length < 21) {
+  setRandSprite(sprite, VMAX = 300) {
+    if (this.mapa.tiles[0] != null && this.sprites.length < 21) {
       //limite de pc+20 sprites na cena
       for (let i = 0; i < this.mapa.LINHAS * this.mapa.COLUNAS; i++) {
         //nao vai garantir achar, mas é um stop com boa probabilidade cumulativa
         const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
         const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
-        if (this.mapa.tiles[rngy][rngx] == 0) {
+        if (this.mapa.tiles[rngy][rngy] == 0) {
           sprite.x = rngx * this.mapa.SIZE + this.mapa.SIZE / 2;
           sprite.y = rngy * this.mapa.SIZE + this.mapa.SIZE / 2;
           sprite.vx = 0;
