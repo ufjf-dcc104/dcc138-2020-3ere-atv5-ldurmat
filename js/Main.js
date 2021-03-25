@@ -10,6 +10,10 @@ const mixer = new Mixer(10);
 const assets = new AssetManager(mixer);
 const input = new InputHandler();
 const canvas = document.querySelector("canvas");
+
+let cenaAtual = null;
+let cenas = {};
+
 canvas.width = 32 * 32;
 canvas.height = 20 * 32;
 
@@ -27,86 +31,128 @@ assets.carregaImagem("pausado", "assets/paused.png");
 assets.carregaImagem("golden", "assets/golden.png");
 assets.carregaImagem("esqueleto", "assets/skelly.png");
 assets.carregaImagem("moeda", "assets/dogesheet.png");
+assets.carregaImagem("portal", "assets/bluePortal.png");
+assets.carregaImagem("play", "assets/play.png");
 assets.carregaAudio("moeda", "assets/coin.wav");
 assets.carregaAudio("boom", "assets/boom.wav");
 
-const menu = new Cena(canvas, assets);
-let cenaAtual = menu;
-menu.iniciar();
+let pc;
+const modeloPc = {
+  x: 32 + 32 / 2,
+  y: 10 * 32 + 32 / 2,
+  assetImg: assets.img("golden"),
+  isPlayer: true,
+};
 
-const cena1 = new Cena(canvas, assets);
+const modeloPortal = {
+  x: 30 * 32,
+  y: 10 * 32 + 32 / 2,
+  isCollectible: true,
+  assetImg: assets.img("portal"),
+  POSES: [{ qmax: 0, pv: 1 }],
+};
+const modeloMoeda = {
+  isCollectible: true,
+  assetImg: assets.img("moeda"),
+  POSES: [
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+    { qmax: 5, pv: 12 },
+  ],
+};
+
+//cena1
+const cena1 = new Cena(canvas, assets, cenaHandler);
 const mapa1 = new Mapa(modeloMapa1.length, modeloMapa1[0].length, 32);
 mapa1.carregaMapa(modeloMapa1);
 mapa1.tileset = assets.img("tileset1");
 cena1.configuraMapa(mapa1);
 
-const pc = new Sprite({
-  x: 1 * mapa1.SIZE + mapa1.SIZE / 2,
-  y: 10 * mapa1.SIZE + mapa1.SIZE / 2,
-  assetImg: assets.img("golden"),
-  isPlayer: true,
-});
-cena1.addPlayer(pc, input);
-const posesMoeda = [
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-  { qmax: 5, pv: 12 },
-];
-cena1.addSprite(
-  new Sprite({
-    isCollectible: true,
-    assetImg: assets.img("moeda"),
-    POSES: posesMoeda,
-  })
-);
-cena1.setTimedEvent(function () {
-  return cena1.setRandSprite(new Sprite({ assetImg: assets.img("esqueleto") }));
-}, 4);
+cenas = {
+  menu: new Cena(canvas, assets, cenaHandler),
+  monkeyForest: cena1,
+};
 
-canvas.addEventListener("mousedown", play);
+cenaHandler("menu");
 
-function play(e) {
-  const pos = cenaAtual.posicaoCursor(e);
-  if (
-    cenaAtual == menu &&
-    pos.x > 100 &&
-    pos.x < 400 &&
-    pos.y > 400 &&
-    pos.y < 500
-  ) {
-    cenaAtual.parar();
-    canvas.removeEventListener("mousedown", play);
-    cenaAtual = cena1;
-    cenaAtual.iniciar();
+function cenaHandler(cenaCall) {
+  switch (cenaCall) {
+    case "menu":
+      cenaAtual?.parar();
+      cenaAtual = cenas["menu"];
+      pc = new Sprite(modeloPc);
+      cenaAtual.iniciar();
+      canvas.addEventListener("mousedown", function menuListener(e) {
+        const pos = cenaAtual.posicaoCursor(e);
+        if (pos.x > 100 && pos.x < 400 && pos.y > 400 && pos.y < 500) {
+          this.removeEventListener("mousedown", menuListener);
+          cenaHandler("monkeyForest");
+        }
+      });
+      break;
+
+    case "end":
+      cenaAtual?.parar();
+      cenaAtual.drawEnd();
+      canvas.addEventListener("mousedown", function menuListener(e) {
+        const pos = cenaAtual.posicaoCursor(e);
+        if (pos.x > 100 && pos.x < 400 && pos.y > 400 && pos.y < 500) {
+          this.removeEventListener("mousedown", menuListener);
+          cenaHandler("menu");
+        }
+      });
+      break;
+
+    case "monkeyForest":
+      cenaAtual?.parar();
+      cenaAtual = cenas["monkeyForest"];
+      preparaCenaAtual();
+      cenaAtual.iniciar();
+      break;
   }
 }
 
-window.onblur = () => cenaAtual.pausar();
-
 input.startKeyMonitoring();
-
+window.onblur = () => cenaAtual.pausar();
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "P":
     case "p":
       if (cenaAtual.t0 != null) {
         cenaAtual.pausar();
-      } else if (cenaAtual != menu) {
+      } else if (cenaAtual != cenas["menu"]) {
         cenaAtual.iniciar();
       }
       break;
-    case "C":
-    case "c":
-      assets.play("moeda");
-      break;
-    case "B":
-    case "b":
-      assets.play("boom");
-      break;
   }
 });
+
+function preparaCenaAtual() {
+  cenaAtual.sprites = [];
+  cenaAtual.aRemover = [];
+  cenaAtual.addPlayer(pc, input);
+  cenaAtual.addSprite(new Sprite(modeloPortal));
+  cenaAtual.player = pc;
+  cenaAtual.t0 = 0;
+  cenaAtual.dt = 0;
+  cenaAtual.idAnim = null;
+  cenaAtual.enemyTimer = 0;
+  cenaAtual.enemyInterval = null;
+  cenaAtual.enemyEvent = null;
+  cenaAtual.coinTimer = 0;
+  cenaAtual.coinInterval = null;
+  cenaAtual.coinEvent = null;
+  cenaAtual.setTimedEnemy(function () {
+    return cenaAtual.setRandSprite(
+      new Sprite({ assetImg: assets.img("esqueleto") })
+    );
+  }, 4);
+  cenaAtual.setTimedCoin(function () {
+    return cenaAtual.setRandSprite(new Sprite(modeloMoeda));
+  }, 6);
+}

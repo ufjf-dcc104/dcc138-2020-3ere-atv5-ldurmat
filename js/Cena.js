@@ -3,7 +3,7 @@ export default class Cena {
     Desenha elementos na tela em uma animação.
   */
 
-  constructor(canvas, assets = null) {
+  constructor(canvas, assets = null, cenaHandler) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.player = null;
@@ -14,10 +14,15 @@ export default class Cena {
     this.idAnim = null;
     this.assets = assets;
     this.mapa = null;
-    this.eventTimer = 0;
-    this.eventInterval = null;
-    this.event = null;
+    this.enemyTimer = 0;
+    this.enemyInterval = null;
+    this.enemyEvent = null;
+    this.coinTimer = 0;
+    this.coinInterval = null;
+    this.coinEvent = null;
     this.input = null;
+    this.cenaCall = cenaHandler;
+    this.endFlag = 0;
   }
 
   desenhar() {
@@ -33,9 +38,12 @@ export default class Cena {
         }
       } else {
         this.pausar();
-        this.checaLoading();
+        this.checkLoading();
       }
     } else {
+      if (this.endFlag == 1) {
+        this.drawEnd();
+      }
       if (this.assets.acabou()) {
         this.ctx.drawImage(this.assets.img("menu"), 0, 0);
       } else {
@@ -68,23 +76,26 @@ export default class Cena {
   quadro(t) {
     this.t0 = this.t0 ?? t;
     this.dt = (t - this.t0) / 1000;
-    this.timedEvent();
+    this.timedEnemy();
+    this.timedCoin();
     this.playerMovement();
     this.passo(this.dt);
     this.desenhar();
     this.checaColisao();
     this.removerSprites();
-    this.iniciar();
+    if (this.endFlag == 0) this.iniciar();
     this.t0 = t;
   }
 
   iniciar() {
+    this.endFlag = 0;
     this.idAnim = requestAnimationFrame((t) => {
       this.quadro(t);
     });
   }
 
   parar() {
+    this.endFlag = 1;
     cancelAnimationFrame(this.idAnim);
     this.t0 = null;
     this.dt = 0;
@@ -98,6 +109,7 @@ export default class Cena {
       this.dt = 0;
     }
   }
+
   checaColisao() {
     for (let a = 0; a < this.sprites.length - 1; a++) {
       const spriteA = this.sprites[a];
@@ -109,29 +121,38 @@ export default class Cena {
       }
     }
   }
+
   quandoColidir(a, b) {
-    if (!a.isCollectible && !b.isCollectible) {
-      if (!this.aRemover.includes(a)) {
-        this.aRemover.push(a);
-      }
-      if (!this.aRemover.includes(b)) {
+    if (!this.aRemover.includes(a) && !this.aRemover.includes(b)) {
+      if (!a.isCollectible && !b.isCollectible) {
+        if (--a.hp < 0) {
+          if (!a.isPlayer) {
+            this.cenaCall("end");
+          } else {
+            this.aRemover.push(a);
+          }
+        }
+        if (--b.hp < 0) {
+          if (!b.isPlayer) {
+            this.cenaCall("end");
+          } else {
+            this.aRemover.push(b);
+          }
+        }
+        this.assets.play("boom");
+      } else if (a.isPlayer && b.isCollectible) {
         this.aRemover.push(b);
+        if(b.assetImg == this.assets.img("moeda")){
+        this.assets.play("moeda");
+        a.collected++;
+        }
+        else{
+          //cenaCall( prox mapa );
+        }
       }
-      this.assets.play("boom");
-    } else if (a.collectible && b.isPlayer) {
-      if (!this.aRemover.includes(a)) {
-        this.aRemover.push(a);
-      }
-      this.assets.play("moeda");
-      b.collected++;
-    } else if (a.isPlayer && b.isCollectible) {
-      if (!this.aRemover.includes(b)) {
-        this.aRemover.push(b);
-      }
-      this.assets.play("moeda");
-      a.collected++;
     }
   }
+
   removerSprites() {
     for (const alvo of this.aRemover) {
       const idx = this.sprites.indexOf(alvo);
@@ -154,21 +175,21 @@ export default class Cena {
         //nao vai garantir achar, mas é um stop com boa probabilidade cumulativa
         const rngx = Math.floor(Math.random() * this.mapa.COLUNAS);
         const rngy = Math.floor(Math.random() * this.mapa.LINHAS);
-        if (this.mapa.tiles[rngy][rngy] == 0) {
+        if (this.mapa.tiles[rngy][rngx] == 0) {
           sprite.x = rngx * this.mapa.SIZE + this.mapa.SIZE / 2;
           sprite.y = rngy * this.mapa.SIZE + this.mapa.SIZE / 2;
-          sprite.vx = 0;
-          sprite.vy = 0;
-          sprite.color = "red";
-          if (Math.random() < 0.5) {
-            sprite.vx = Math.floor(Math.random() * VMAX * 2) - VMAX;
-            if (Math.random() < 0.2) {
+          if (!sprite.isCollectible) {
+            sprite.color = "red";
+            if (Math.random() < 0.5) {
+              sprite.vx = Math.floor(Math.random() * VMAX * 2) - VMAX;
+              if (Math.random() < 0.2) {
+                sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+              }
+            } else {
               sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
-            }
-          } else {
-            sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
-            if (Math.random() < 0.2) {
-              sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+              if (Math.random() < 0.2) {
+                sprite.vy = Math.floor(Math.random() * VMAX * 2) - VMAX;
+              }
             }
           }
           this.addSprite(sprite);
@@ -178,17 +199,31 @@ export default class Cena {
     }
   }
 
-  setTimedEvent(evento, intervalo) {
-    this.event = evento;
-    this.eventInterval = intervalo;
+  setTimedEnemy(evento, intervalo) {
+    this.enemyEvent = evento;
+    this.enemyInterval = intervalo;
   }
 
-  timedEvent() {
-    if (this.eventInterval != null && this.eventTimer > this.eventInterval) {
-      this.event();
-      this.eventTimer = 0;
+  setTimedCoin(evento, intervalo) {
+    this.coinEvent = evento;
+    this.coinInterval = intervalo;
+  }
+
+  timedEnemy() {
+    if (this.enemyInterval != null && this.enemyTimer > this.enemyInterval) {
+      this.enemyEvent();
+      this.enemyTimer = 0;
     } else {
-      this.eventTimer += this.dt;
+      this.enemyTimer += this.dt;
+    }
+  }
+
+  timedCoin() {
+    if (this.coinInterval != null && this.coinTimer > this.coinInterval) {
+      this.coinEvent();
+      this.coinTimer = 0;
+    } else {
+      this.coinTimer += this.dt;
     }
   }
 
@@ -199,24 +234,23 @@ export default class Cena {
     return { x, y };
   }
 
-  async checaLoading() {
+  checkLoading() {
     this.ctx.drawImage(this.assets.img("loading"), 0, 0);
+    console.log("Loading...");
     const tempoInit = new Date().getTime();
     while (true) {
       if (this.assets.acabou()) {
         console.log("Loading acabou!");
         break;
-      }
-      if (new Date() > tempoInit + 4000) {
-        console.log("Loading timeout...");
+      } else if (new Date().getTime() > tempoInit + 4000) {
+        console.log("Loading timeout.");
         break;
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
   playerMovement() {
-    const pcSpeed = 200;
+    const pcSpeed = 400;
     const input = this.input;
     if (input != null) {
       if (input.isPressed(input.keyset.W) == input.isPressed(input.keyset.S)) {
@@ -234,5 +268,26 @@ export default class Cena {
         this.player.vx = pcSpeed;
       }
     }
+  }
+
+  drawEnd() {
+    const mony = this.player.collected;
+    let endImg = null;
+    if (mony < 10) {
+      endImg = "endHow";
+    } else if (mony < 25) {
+      if (Math.random() < 0.5) endImg = "endSuch";
+      else endImg = "endMuch";
+    } else if (mony < 50) {
+      if (Math.random() < 0.5) endImg = "endMany";
+      else endImg = "endVery";
+    } else {
+      endImg = "endWow";
+    }
+    this.ctx.drawImage(this.assets.img("ending"), 0, 0);
+    this.ctx.drawImage(this.assets.img(endImg), 500, 400);
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "yellow";
+    this.ctx.fillText(`Moedas coletadas: ${mony}`, 450, 550);
   }
 }

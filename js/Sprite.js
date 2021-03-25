@@ -12,6 +12,7 @@ export default class Sprite {
     color = "white",
     assetImg = new Image(),
     isPlayer = false,
+    hp = 0,
     isCollectible = false,
     POSES = [
       { qmax: 8, pv: 12 },
@@ -28,14 +29,14 @@ export default class Sprite {
     this.h = h;
     this.color = color;
     this.cena = null;
-    this.mx = 0;
-    this.my = 0;
+    this.mx = null;
+    this.my = null;
     this.isCollectible = isCollectible;
     this.isPlayer = isPlayer;
     this.collected = 0;
     this.assetImg = assetImg;
     this.SIZE = 64;
-    this.tipo = null;
+    this.hp = hp;
     this.pose = 0;
     this.quadro = 0;
     this.POSES = POSES;
@@ -59,17 +60,6 @@ export default class Sprite {
       ctx.fillText(`Moedas: ${this.collected}`, 10, 20);
     }
   }
-  // desenharDefault(ctx) {
-  //   ctx.fillStyle = this.color;
-  //   ctx.fillRect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h);
-  //   ctx.strokeStyle = "blue";
-  //   ctx.strokeRect(
-  //     this.mx * this.cena.mapa.SIZE,
-  //     this.my * this.cena.mapa.SIZE,
-  //     this.cena.mapa.SIZE,
-  //     this.cena.mapa.SIZE
-  //   );
-  // }
 
   passo(dt) {
     this.x = this.x + this.vx * dt;
@@ -135,6 +125,7 @@ export default class Sprite {
     this.aplicaRestricoesCima(this.mx, this.my - 1);
     this.aplicaRestricoesCima(this.mx + 1, this.my - 1);
   }
+  
   aplicaRestricoesDireita(pmx, pmy) {
     const SIZE = this.cena.mapa.SIZE;
     if (this.vx > 0) {
@@ -188,7 +179,7 @@ export default class Sprite {
   aplicaRestricoesBaixo(pmx, pmy) {
     const SIZE = this.cena.mapa.SIZE;
     if (this.vy > 0) {
-      if (this.cena.mapa.tiles[pmy][pmx] != 0) {
+      if (this.cena.mapa.tiles[pmy][pmx]!= 0) {
         const tile = {
           x: pmx * SIZE + SIZE / 2,
           y: pmy * SIZE + SIZE / 2,
